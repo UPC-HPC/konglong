@@ -4,18 +4,17 @@
 #include<xmmintrin.h>
 #include<stddef.h>
 _gloval_ void applyVel(Wavefield *myLocalWavefield,int nx,int ny,int nz){
-  int nx = myGrid->nx, ny = myGrid->ny, nz = myGrid->nz;
-  float *__restrict vel = volModel[VEL];
-  size_t nxz = nx * nz;
-#pragma omp parallel for num_threads(nThreads) schedule(static)
-  for(int iy = 0; iy < ny; iy++) {
-    for(size_t ixz = 0; ixz < nxz; ixz += SSEsize) {
-      size_t i = iy * nxz + ixz;
-      __m128 v2 = _mm_load_ps(vel + i);
-      __m128 vectx = _mm_load_ps(myLocalWavefield->wb + i);
-      _mm_store_ps(myLocalWavefield->wb + i, _mm_mul_ps(vectx, v2));
+    int ix = threadIdx.x+blockIdx.x*blockDim.x
+    int iy = threadIdx.y+blockIdx.y*blockDim.y
+    int iz = threadIdx.z+blockIdx.z*blockDim.z
+    size_t ixz = ix * nz + iz;
+    size_t nxz = nx * nz;
+    if(iy < ny && ixz < nxz){
+        size_t i = iy * nxz+ixz;
+        float v2 = vel[i]；
+        float vectx = myLocalWavefield->wb[i]
+        myLocalWavefield->wb[i] = v2 * vectx;
     }
-  }
 }
 
 
@@ -29,6 +28,7 @@ int main(){
     float *__restrict d_vel = NULL;
     
     cudaMemcpy(d_vel,h_vel,bytes,cudaMemcpyHostToDevice);
+    cudaMemcpy(d_myLocalWavefield,h_myLocalWavefield,cudaMemcpyHostToDevice)
     cudaDeviceSynchronize();
 
 
@@ -38,5 +38,5 @@ int main(){
     dim3 block(dimx,dimy,dimz);
     dim3 grid((nx+block.x-1)/block.x,(ny+block.y-1)/block.y,(nz+block.z-1)/block.z)
 
-    applyVel<<<grid,block>>>(myLocalWavefield,nx,ny,nz);
+    applyVel<<<grid,block>>>(d_myLocalWavefield,d_vel,nx,ny,nz);
 }
