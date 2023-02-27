@@ -895,7 +895,7 @@ void Propagator::printTime(int it, PROP::Direction direct, float *w) {
 void Propagator::kernel() {
 
     printf("Start Propagator::Kernel0128\n");
-   //test123
+
    // gpu_test();
 
     if(engineType == FD::FFTV || engineType == FD::CFD_BATCH || engineType == FD::SINCOS)
