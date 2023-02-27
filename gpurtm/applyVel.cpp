@@ -41,5 +41,5 @@ int main(){
 
     applyVel<<<grid,block>>>(d_myLocalWavefield,d_vel,nx,ny,nz);
     cudaDeviceSynchronize();
-    cudaMemcpy(myLocalWavefield,d_myLocalWavefield,cudaMemcpyDeviceToHost)
+    cudaMemcpy(myLocalWavefield,d_myLocalWavefield,Wavefield,cudaMemcpyDeviceToHost)
 }
