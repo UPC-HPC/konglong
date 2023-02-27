@@ -27,8 +27,9 @@ int main(){
     float *__restrict h_vel = volModel[VEL];
     float *__restrict d_vel = NULL;
     
-    cudaMemcpy(d_vel,h_vel,bytes,cudaMemcpyHostToDevice);
-    cudaMemcpy(d_myLocalWavefield,h_myLocalWavefield,cudaMemcpyHostToDevice)
+
+    cudaMemcpy(d_vel,h_vel,nBytes,cudaMemcpyHostToDevice);
+    cudaMemcpy(d_myLocalWavefield,myLocalWavefield,Wavefield,cudaMemcpyHostToDevice)
     cudaDeviceSynchronize();
 
 
@@ -39,4 +40,6 @@ int main(){
     dim3 grid((nx+block.x-1)/block.x,(ny+block.y-1)/block.y,(nz+block.z-1)/block.z)
 
     applyVel<<<grid,block>>>(d_myLocalWavefield,d_vel,nx,ny,nz);
+    cudaDeviceSynchronize();
+    cudaMemcpy(myLocalWavefield,d_myLocalWavefield,cudaMemcpyDeviceToHost)
 }
