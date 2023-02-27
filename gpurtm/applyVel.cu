@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <xmmintrin.h>
 #include <stddef.h>
+
 _gloval_ void applyVel(Wavefield *myLocalWavefield,float *vel,int nx,int ny,int nz){
     int ix = threadIdx.x+blockIdx.x*blockDim.x
     int iy = threadIdx.y+blockIdx.y*blockDim.y
