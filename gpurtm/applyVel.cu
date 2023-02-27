@@ -6,15 +6,15 @@
 #include <stddef.h>
 
 _gloval_ void applyVel(Wavefield *myLocalWavefield,float *vel,int nx,int ny,int nz){
-    int ix = threadIdx.x+blockIdx.x*blockDim.x
-    int iy = threadIdx.y+blockIdx.y*blockDim.y
-    int iz = threadIdx.z+blockIdx.z*blockDim.z
+    int ix = threadIdx.x+blockIdx.x*blockDim.x;
+    int iy = threadIdx.y+blockIdx.y*blockDim.y;
+    int iz = threadIdx.z+blockIdx.z*blockDim.z;
     size_t ixz = ix * nz + iz;
     size_t nxz = nx * nz;
     if(iy < ny && ixz < nxz){
         size_t i = iy * nxz+ixz;
-        float v2 = vel[i]；
-        float vectx = myLocalWavefield->wb[i]
+        float v2 = vel[i];
+        float vectx = myLocalWavefield->wb[i];
         myLocalWavefield->wb[i] = v2 * vectx;
     }
 }
