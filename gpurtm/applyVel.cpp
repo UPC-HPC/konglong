@@ -3,7 +3,7 @@
 #include<conio.h>
 #include<xmmintrin.h>
 #include<stddef.h>
-_gloval_ void applyVel(Wavefield *myLocalWavefield,int nx,int ny,int nz){
+_gloval_ void applyVel(Wavefield *myLocalWavefield,float *vel,int nx,int ny,int nz){
     int ix = threadIdx.x+blockIdx.x*blockDim.x
     int iy = threadIdx.y+blockIdx.y*blockDim.y
     int iz = threadIdx.z+blockIdx.z*blockDim.z
