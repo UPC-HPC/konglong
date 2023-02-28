@@ -11,6 +11,17 @@ _global_ void applyVel(float* wb,const float *vel,const int nxyz){
         wb[ix]*=vel[i];
 }
 
+void checkResult(float *cpu_wb,float *gpu_wb,const int size){
+    double epsilon=1.0E-8;
+    bool match=1;
+    for(int i=0;i<size;i++){
+        if(abs(cpu_wb[i]-gpu_wb[i]>epsilon)){
+            match=0;
+            printf("Arrays do not match!\n")
+            printf("cpu %5.2f gpu %5.2f at current %d\n",cpu_wb[i],gpu_wb[i],i);
+        }
+    }
+}
 
 
 int main(){
@@ -54,5 +65,9 @@ int main(){
 
     cudaFree(d_wb);
     cudaFree(d_vel);
+
+    free(wb);
+    free(cpu_wb);
+    free(gpu_wb);
 
 }
