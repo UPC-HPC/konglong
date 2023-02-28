@@ -25,12 +25,13 @@ _global_ void applyVel(float* wb,const float *vel,const int nxyz){
 int main(){
     int nx = myGrid->nx, ny = myGrid->ny, nz = myGrid->nz;
     
-    int size=nx*ny*nz;
+    size_t size=nx*ny*nz;
+    size_t nBytes=nxyz*sizeof(float);
 
-    float *__restrict h_vel = volModel[VEL];
-    float *__restrict d_vel = NULL;
-    
-    float *wb = (float*) malloc(size*sizeof(float));
+    float *__restrict vel = volModel[VEL];
+
+    float *wb = (float*) malloc(nBytes);
+    float *h_wb = (float*) malloc(nBytes);
 
     for(int i=0; i<size;i++)
     {
@@ -38,10 +39,12 @@ int main(){
     }
 
     float *d_wb;
-    cudaMalloc((void **)&d_wb, size*sizeof(float));
+    float *d_vel;
+    cudaMalloc((void **)&d_wb, nBytes);
+    cudaMalloc((void **)&d_vel, nBytes);
 
-    cudaMemcpy(d_vel,h_vel,nBytes,cudaMemcpyDefault);
-    cudaMemcpy(d_wb,wb,size*sizeof(float),cudaMemcpyHostToDevice)
+    cudaMemcpy(d_vel,vel,nBytes,cudaMemcpyDefault);
+    cudaMemcpy(d_wb,wb,nBytes,cudaMemcpyDefault);
     
 
 
@@ -51,5 +54,9 @@ int main(){
 
     applyVel<<<grid,block>>>(d_wb,d_vel,size);
 
-    cudaMemcpy(myLocalWavefield,d_myLocalWavefield,Wavefield,cudaMemcpyDeviceToHost)
+    cudaMemcpy(gpu_wb,d_wb,nBytes,cudaMemcpyDeviceToHost);
+
+    cudaFree(d_wb);
+    cudaFree(d_vel);
+
 }
