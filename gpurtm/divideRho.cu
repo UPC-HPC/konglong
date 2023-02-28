@@ -3,12 +3,15 @@
 #include<stdio.h>
 using namespace std;
 
-__global__ void divideRhoOnGPU(float* rho, float* wx, float* wy, float* wz, int nx, int ny)
+__global__ void divideRhoOnGPU(float* rho, float* wx, float* wy, float* wz, int nx, int ny, int nxyz)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if(nx>1) wx[i] /= rho[i];
-    if(ny>1) wy[i] /= rho[i];
-    wz[i] /= rho[i];
+    if (i < nxyz)
+    {
+        if (nx > 1) wx[i] /= rho[i];
+        if (ny > 1) wy[i] /= rho[i];
+        wz[i] /= rho[i];
+    }
 }
 
 
@@ -19,17 +22,6 @@ void Propagator::divideRho(Wavefield* wf){ // ATTN: check the vectorization
     float* __restrict wx = wf->wx;
     float* __restrict wy = wf->wy;
     float* __restrict wz = wf->wz;
-    /*
-#pragma omp parallel for num_threads(nThreads) schedule(static)
-    for (size_t ixy = 0; ixy < nxy; ixy++) {
-        for (int iz = 0; iz < nz; iz++) {
-            size_t i = ixy * nz + iz;
-            if (nx > 1) wx[i] /= rho[i];
-            if (ny > 1) wy[i] /= rho[i];
-            wz[i] /= rho[i];
-        }
-    }
-    */
 
     //malloc device global memory
     float* d_rho, * d_wx, * d_wy, * d_wz;
@@ -51,7 +43,7 @@ void Propagator::divideRho(Wavefield* wf){ // ATTN: check the vectorization
     dim3 block(128,1,1);
     dim3 grid(nxyz % 128 = 0 ? nxyz / 128 : nxyz / 128 + 1, 1, 1);
 
-    divideRhoOnGPU << <grid, block >> > (d_rho, d_wx, d_wy, d_wz, nx, ny);
+    divideRhoOnGPU << <grid, block >> > (d_rho, d_wx, d_wy, d_wz, nx, ny, nxyz);
     
     //copy kernel result back to host side
     cudaMemcpy(rho, d_rho, nBytes, cudaMemcpyDeviceToHost);
