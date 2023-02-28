@@ -5,17 +5,18 @@
 #include <xmmintrin.h>
 #include <stddef.h>
 
-_global_ void applyVel(Wavefield *myLocalWavefield,float *vel,int nx,int ny,int nz){
+_global_ void applyVel(float* wb,const float *vel,const int nxyz){
     int ix = threadIdx.x+blockIdx.x*blockDim.x;
-    int iy = threadIdx.y+blockIdx.y*blockDim.y;
-    int iz = threadIdx.z+blockIdx.z*blockDim.z;
-    size_t ixz = ix * nz + iz;
-    size_t nxz = nx * nz;
-    if(iy < ny && ixz < nxz){
-        size_t i = iy * nxz+ixz;
-        float v2 = vel[i];
-        float vectx = myLocalWavefield->wb[i];
-        myLocalWavefield->wb[i] = v2 * vectx;
+    //int iy = threadIdx.y+blockIdx.y*blockDim.y;
+    //int iz = threadIdx.z+blockIdx.z*blockDim.z;
+    //size_t ixz = ix * nz + iz;
+    //size_t nxz = nx * nz;
+    if(ix < nxyz){
+        wb[ix]*=vel[i];
+       // size_t i = iy * nxz+ixz;
+      //  float v2 = vel[i];
+       // float vectx = myLocalWavefield->wb[i];
+       // myLocalWavefield->wb[i] = v2 * vectx;
     }
 }
 
@@ -29,19 +30,26 @@ int main(){
     float *__restrict h_vel = volModel[VEL];
     float *__restrict d_vel = NULL;
     
+    float *wb = (float*) malloc(size*sizeof(float));
 
-    cudaMemcpy(d_vel,h_vel,nBytes,cudaMemcpyHostToDevice);
-    cudaMemcpy(d_myLocalWavefield,myLocalWavefield,Wavefield,cudaMemcpyHostToDevice)
-    cudaDeviceSynchronize();
+    for(int i=0; i<size;i++)
+    {
+        wb[i]=0.1f*i+0.5f;
+    }
+
+    float *d_wb;
+    cudaMalloc((void **)&d_wb, size*sizeof(float));
+
+    cudaMemcpy(d_vel,h_vel,nBytes,cudaMemcpyDefault);
+    cudaMemcpy(d_wb,wb,size*sizeof(float),cudaMemcpyHostToDevice)
+    
 
 
     int dimx = 128;
-    int dimy = 128;
-    int dimz = 128;
-    dim3 block(dimx,dimy,dimz);
-    dim3 grid((nx+block.x-1)/block.x,(ny+block.y-1)/block.y,(nz+block.z-1)/block.z)
+    dim3 block(dimx);
+    dim3 grid((size+block.x-1)/block.x);
 
-    applyVel<<<grid,block>>>(d_myLocalWavefield,d_vel,nx,ny,nz);
-    cudaDeviceSynchronize();
+    applyVel<<<grid,block>>>(d_wb,d_vel,size);
+
     cudaMemcpy(myLocalWavefield,d_myLocalWavefield,Wavefield,cudaMemcpyDeviceToHost)
 }
