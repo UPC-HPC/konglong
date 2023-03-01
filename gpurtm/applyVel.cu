@@ -18,13 +18,7 @@ int main(){
 
     float *__restrict vel = volModel[VEL];
 
-    float *wb = (float *)malloc(nBytes);
-
-    memset(wb,0,nBytes);
-
-    for(int i=0;i<size;i++){
-        wb[i]=myLocalWavefield->wb[i];
-    }
+    float *mywb=myLocalWavefield->wb;
 
     float *d_wb;
     float *d_vel;
@@ -42,10 +36,7 @@ int main(){
 
     applyVel<<<grid,block>>>(d_wb,d_vel,size);
 
-    cudaMemcpy(wb,d_wb,nBytes,cudaMemcpyDeviceToHost);
-    for(int i=0;i<size;i++){
-        myLocalWavefield->wb[i]=wb[i];
-    }
+    cudaMemcpy(mywb,d_wb,nBytes,cudaMemcpyDeviceToHost);
 
     cudaFree(d_wb);
     cudaFree(d_vel);
