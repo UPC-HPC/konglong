@@ -4,6 +4,7 @@
 
 # CUDA directory:
 CUDA_ROOT_DIR=/usr/local/cuda
+CUDA_SDK_DIR=${CUDA_ROOT_DIR}/samples/common/
 
 ##########################################################
 
@@ -27,10 +28,12 @@ NVCC_LIBS= -L$(CUDA_ROOT_DIR)/lib64 -lcudart -lcufft
 # CUDA library directory:
 CUDA_LIB_DIR= -L$(CUDA_ROOT_DIR)/lib64
 # CUDA include directory:
-CUDA_INC_DIR= -I$(CUDA_ROOT_DIR)/include
+CUDA_INC_DIR= -I$(CUDA_ROOT_DIR)/include  -I$(CUDA_SDK_DIR)/inc -I$(CUDA_SDK_DIR)/include
 # CUDA linking libraries:
 CUDA_LINK_LIBS= -lcudart -lcufft
 
+
+NVCC_FLAGS+= -I$(CUDA_INC_DIR)
 ##########################################################
 ##########################################################
 
