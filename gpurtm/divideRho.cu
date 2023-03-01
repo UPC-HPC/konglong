@@ -1,8 +1,3 @@
-#include"cuda_runtime.h"
-#include "device_launch_parameters.h"
-#include<stdio.h>
-using namespace std;
-
 __global__ void divideRhoOnGPU(float* rho, float* wx, float* wy, float* wz, int nx, int ny, int nxyz)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
