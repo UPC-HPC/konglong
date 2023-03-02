@@ -41,7 +41,4 @@ int main(){
     cudaFree(d_wb);
     cudaFree(d_vel);
 
-    free(wb);
-    free(cpu_wb);
-
 }
