@@ -27,7 +27,7 @@ int main(){
     cudaMalloc((void **)&d_vel,nBytes);
 
     cudaMemcpy(d_vel, vel, nBytes, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_wb, wb, nBytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_wb, mywb, nBytes, cudaMemcpyHostToDevice);
 
      
     int dimx = 128;
