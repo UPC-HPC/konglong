@@ -1,5 +1,5 @@
-#include "cuda_kernel.h"
-#include "cuda_related.h"
+#include "gpu_kernel.h"
+#include "gpu_related.h"
 inline __host__ __device__ unsigned int iDivUp(unsigned int a, unsigned int b)
 {
     return (a % b != 0) ? (a / b + 1) : (a / b);
@@ -17,5 +17,11 @@ void printGpuMemInfo () {
                 (unsigned long long)freeMem,
                 (unsigned long long)totalMem );
     return ;
+}
+
+void gpu_kernel()
+{
+    printGpuMemInfo();
+    return;
 }
 

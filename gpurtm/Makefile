@@ -43,8 +43,8 @@ NVCC_FLAGS+= -I$(CUDA_INC_DIR)
 EXE = run_test
 
 # Object files:
-CUOBJS = cuda_kernel.o
-CPPOBJS = main.o
+CUOBJS = gpu_kernel.o
+CPPOBJS = main.o cpu_kernel.o
 
 ##########################################################
 
