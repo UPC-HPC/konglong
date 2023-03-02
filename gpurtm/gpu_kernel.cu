@@ -19,7 +19,7 @@ void printGpuMemInfo () {
     return ;
 }
 
-void gpu_kernel()
+void gpu_kernel(Wavefield *mywf)
 {
     printGpuMemInfo();
     return;
