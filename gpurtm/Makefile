@@ -44,7 +44,7 @@ EXE = run_test
 
 # Object files:
 CUOBJS = gpu_kernel.o
-CPPOBJS = main.o cpu_kernel.o
+CPPOBJS = main.o cpu_kernel.o Wavefield.o
 
 ##########################################################
 

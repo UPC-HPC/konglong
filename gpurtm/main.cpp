@@ -5,6 +5,9 @@
 
 int main()
 {
+    int nx=48;
+    int ny=32;
+    int nz=108;
 
     int nt = 1477;
     int nts = 187;
@@ -22,7 +25,7 @@ int main()
         int its = (it-it0);
 
         //run the kernel
-        cpu_kernel();
+        cpu_kernel(nx,ny,nz);
         gpu_kernel();
         exit(0);
     }
