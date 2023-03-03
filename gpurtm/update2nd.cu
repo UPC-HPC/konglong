@@ -39,8 +39,8 @@ int main(){
 
     if(!myModel->useQ)
     {
-        float *w0=(float *)malloc(nBytes);
-        float *w1=(float *)malloc(nBytes);
+        float *w0=myLocalWavefield->w0;
+        float *w1=myLocalWavefield->w1;
 
         float *d_w0;
         float *d_w1;
@@ -68,8 +68,8 @@ int main(){
 else
     {
         float *invQ = volModel[Q];
-        float *w0=(float *)malloc(nBytes);
-        float *w1=(float *)malloc(nBytes);
+        float *w0=myLocalWavefield->w0;
+        float *w1=myLocalWavefield->w1;
         float cqsum=Q::cqsum;
         int   order=Q::order;
         float *d0 = myWavefield->wq[myWavefield->iq0][0];
@@ -84,21 +84,22 @@ else
         float *d_cl;
         float *d_el;
 
+        float orderBytes=order*sizeof(float);
         cudaMalloc((void **)&d_invQ,nBytes);
         cudaMalloc((void **)&d_w0,nBytes);
         cudaMalloc((void **)&d_w1,nBytes);
-        cudaMalloc((void **)&d_d0,nBytes);
-        cudaMalloc((void **)&d_d1,nBytes);
-        cudaMalloc((void **)&d_cl,nBytes);
-        cudaMalloc((void **)&d_el,nBytes);
+        cudaMalloc((void **)&d_d0,orderBytes);
+        cudaMalloc((void **)&d_d1,orderBytes);
+        cudaMalloc((void **)&d_cl,orderBytes);
+        cudaMalloc((void **)&d_el,orderBytes);
         
         cudaMemcpy(d_invQ, invQ, nBytes, cudaMemcpyHostToDevice);
         cudaMemcpy(d_w0, w0, nBytes, cudaMemcpyHostToDevice);
         cudaMemcpy(d_w1, w1, nBytes, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_d0, d0, nBytes, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_d1, d1, nBytes, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_cl, cl, nBytes, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_el, el, nBytes, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_d0, d0, orderBytes, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_d1, d1, orderBytes, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_cl, cl, orderBytes, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_el, el, orderBytes, cudaMemcpyHostToDevice);
 
         int dimx=128;
         dim3 block(dimx);
