@@ -23,14 +23,17 @@ int main()
 
     Wavefield *mywf = new Wavefield(nx,ny,nz);
 
-    mywf->set_data();
     while(it!=it02)
     {
         int its = (it-it0);
 
+        mywf->set_data();
         //run the kernel
         cpu_kernel(mywf);
         gpu_kernel(mywf);
+
+        mywf->compare_host_dev();
+        
         exit(0);
     }
 

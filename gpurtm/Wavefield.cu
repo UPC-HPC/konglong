@@ -172,11 +172,53 @@ void Wavefield::copy_host2dev()
         checkCudaErrors(cudaMemcpy(d_wy, wy, memSize,cudaMemcpyDefault));
         checkCudaErrors(cudaMemcpy(d_wz, wz, memSize,cudaMemcpyDefault));
         checkCudaErrors(cudaMemcpy(d_wr, wr, memSize,cudaMemcpyDefault));
+        printf("CPU Wavefield data are copied to GPU\n");
     }
     else
     {
     
         printf("ERROR: Either CPU or GPU Memory has not been allocated!\n");
     }
+} 
+
+void Wavefield::copy_dev2host() 
+{
+    size_t nxyz = (size_t)nx_ * ny_ * nz_;
+    size_t memSize = nxyz*sizeof(float);
+    if(cpuInitialized&&gpuInitialized)
+    {
+        checkCudaErrors(cudaMemcpy(w0, d_w0, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(w1, d_w1, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(wb, d_wb, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(wx, d_wx, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(wy, d_wy, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(wz, d_wz, memSize,cudaMemcpyDefault));
+        checkCudaErrors(cudaMemcpy(wr, d_wr, memSize,cudaMemcpyDefault));
+    }
+    else
+    {
+    
+        printf("ERROR: Either CPU or GPU Memory has not been allocated!\n");
+    }
+} 
+
+int Wavefield::compare_host_dev() 
+{
+
+    if( compare_data_3d(w0,d_w0,nx_,ny_,nz_)+
+        compare_data_3d(w1,d_w1,nx_,ny_,nz_)+
+        compare_data_3d(wb,d_wb,nx_,ny_,nz_)+
+        compare_data_3d(wx,d_wx,nx_,ny_,nz_)+
+        compare_data_3d(wy,d_wy,nx_,ny_,nz_)+
+        compare_data_3d(wz,d_wz,nx_,ny_,nz_)+
+        compare_data_3d(wr,d_wr,nx_,ny_,nz_))
+    {   
+        printf("ERROR: Found Mismatch\n");
+        return 1;
+    }
+
+    printf("Successful CPU GPU data comparison\n");
+    return 0;
+
 } 
 

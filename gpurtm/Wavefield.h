@@ -29,7 +29,8 @@ public:
   void deallocate_gpu_mem();
   void set_data();
   void copy_host2dev();
-
+  void copy_dev2host();
+  int compare_host_dev();
 private:
   bool cpuInitialized;
   bool gpuInitialized;
