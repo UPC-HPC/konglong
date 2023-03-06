@@ -1,5 +1,6 @@
 #ifndef CPU_KERNEL_H_
 #define CPU_KERNEL_H_
-void cpu_kernel(const int nx, const int ny, const int nz);
+#include "Wavefield.h"
+void cpu_kernel(Wavefield *mywf);
 #endif
 

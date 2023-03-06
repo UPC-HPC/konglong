@@ -1,11 +1,12 @@
 #include "cpu_kernel.h"
-#include "Wavefield.h"
 
-void cpu_kernel(const int nx, const int ny, const int nz)
+void cpu_kernel(Wavefield *mywf)
 {
 
-    Wavefield *mywf = new Wavefield(nx,ny,nz);
+    
 
-    delete mywf;
+//    Wavefield *mywf = new Wavefield(nx,ny,nz);
+
+  //  delete mywf;
     return;
 }

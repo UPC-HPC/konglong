@@ -43,8 +43,8 @@ NVCC_FLAGS+= -I$(CUDA_INC_DIR)
 EXE = run_test
 
 # Object files:
-CUOBJS = gpu_kernel.o
-CPPOBJS = main.o cpu_kernel.o Wavefield.o
+CUOBJS = gpu_kernel.o Wavefield.o common_util.o
+CPPOBJS = main.o cpu_kernel.o 
 
 ##########################################################
 
@@ -57,7 +57,7 @@ $(EXE) : $(CPPOBJS) $(CUOBJS)
 # Compile main .cpp file to object files:
 # Compile main .cpp file to object files:
 %.o : %.cpp
-	$(CC) $(CC_FLAGS) -c $<  
+	$(CC) $(CC_FLAGS) -c $< $(CUDA_INC_DIR)
 
 
 # Compile CUDA source files to object files:
