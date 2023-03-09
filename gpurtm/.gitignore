@@ -5,4 +5,4 @@
 *.ptx
 *.cubin
 *.fatbin
-run_test*
+run_test
